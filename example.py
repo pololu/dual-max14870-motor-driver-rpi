@@ -2,6 +2,7 @@ from __future__ import print_function
 import time
 from dual_max14870_rpi import motors, MAX_SPEED
 
+# Define a custom exception to raise if a fault is detected.
 class DriverFault(Exception):
     pass
 
@@ -31,9 +32,10 @@ try:
         raiseIfFault()
         time.sleep(0.002)
 
-    motors.disableDrivers()
+    # Disable the drivers for half a second.
+    motors.disable()
     time.sleep(0.5)
-    motors.enableDrivers()
+    motors.enable()
 
     print("Motor 2 forward")
     for s in test_forward_speeds:

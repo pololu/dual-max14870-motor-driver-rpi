@@ -57,10 +57,10 @@ class Motors(object):
     def getFault(self):
         return not pi.read(_pin_nFAULT)
 
-    def enableDrivers(self):
+    def enable(self):
         pi.write(_pin_nEN, 0)
 
-    def disableDrivers(self):
+    def disable(self):
         pi.write(_pin_nEN, 1)
 
 motors = Motors()
