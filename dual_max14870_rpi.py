@@ -7,10 +7,17 @@ if not pi.connected:
 # Motor speeds for this library are specified as numbers between -MAX_SPEED and
 # MAX_SPEED, inclusive.
 # This has a value of 480 for historical reasons/to maintain compatibility with
-# older versions of the library (which used WiringPi to set up the hardware PWM
-# directly).
+# older libraries for other Pololu boards (which used WiringPi to set up the
+# hardware PWM directly).
 _max_speed = 480
 MAX_SPEED = _max_speed
+
+_pin_nEN = 5
+_pin_nFAULT = 6
+_pin_M1PWM = 12
+_pin_M2PWM = 13
+_pin_M1DIR = 24
+_pin_M2DIR = 25
 
 class Motor(object):
     MAX_SPEED = _max_speed
@@ -37,13 +44,23 @@ class Motors(object):
     MAX_SPEED = _max_speed
 
     def __init__(self):
-        self.motor1 = Motor(12, 24)
-        self.motor2 = Motor(13, 25)
+        self.motor1 = Motor(_pin_M1PWM, _pin_M1DIR)
+        self.motor2 = Motor(_pin_M2PWM, _pin_M2DIR)
 
-        pi.write(5, 0) # drive nEN low to enable drivers
+        pi.set_pull_up_down(_pin_nFAULT, pigpio.PUD_UP) # make sure nFAULT is pulled up
+        pi.write(_pin_nEN, 0) # enable drivers by default
 
     def setSpeeds(self, m1_speed, m2_speed):
         self.motor1.setSpeed(m1_speed)
         self.motor2.setSpeed(m2_speed)
+
+    def getFault(self):
+        return read(_pin_NFAULT)
+
+    def enableDrivers(self):
+        pi.write(_pin_nEN, 0)
+
+    def disableDrivers(self):
+        pi.write(_pin_nEN, 1)
 
 motors = Motors()
