@@ -5,10 +5,9 @@ from dual_max14870_rpi import motors, MAX_SPEED
 class DriverFault(Exception):
     pass
 
-def raiseIfFault:
+def raiseIfFault():
     if motors.getFault():
         raise DriverFault
-
 
 # Set up sequences of motor speeds.
 test_forward_speeds = list(range(0, MAX_SPEED, 1)) + \
@@ -23,12 +22,14 @@ try:
     print("Motor 1 forward")
     for s in test_forward_speeds:
         motors.motor1.setSpeed(s)
-        time.sleep(0.005)
+        raiseIfFault()
+        time.sleep(0.002)
 
     print("Motor 1 reverse")
     for s in test_reverse_speeds:
         motors.motor1.setSpeed(s)
-        time.sleep(0.005)
+        raiseIfFault()
+        time.sleep(0.002)
 
     motors.disableDrivers()
     time.sleep(0.5)
@@ -37,14 +38,14 @@ try:
     print("Motor 2 forward")
     for s in test_forward_speeds:
         motors.motor2.setSpeed(s)
-        time.sleep(0.005)
+        raiseIfFault()
+        time.sleep(0.002)
 
     print("Motor 2 reverse")
     for s in test_reverse_speeds:
         motors.motor2.setSpeed(s)
-        time.sleep(0.005)
-
-
+        raiseIfFault()
+        time.sleep(0.002)
 
 except DriverFault:
     print("Driver fault!")

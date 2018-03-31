@@ -55,7 +55,7 @@ class Motors(object):
         self.motor2.setSpeed(m2_speed)
 
     def getFault(self):
-        return not pi.read(_pin_NFAULT)
+        return not pi.read(_pin_nFAULT)
 
     def enableDrivers(self):
         pi.write(_pin_nEN, 0)
