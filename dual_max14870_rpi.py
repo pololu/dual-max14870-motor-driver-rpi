@@ -1,8 +1,8 @@
 import pigpio
 
-pi = pigpio.pi()
-if not pi.connected:
-  exit()
+_pi = pigpio.pi()
+if not _pi.connected:
+    raise IOError("Can't connect to pigpio")
 
 # Motor speeds for this library are specified as numbers between -MAX_SPEED and
 # MAX_SPEED, inclusive.
@@ -36,8 +36,8 @@ class Motor(object):
         if speed > MAX_SPEED:
             speed = MAX_SPEED
 
-        pi.write(self.dir_pin, dir_value)
-        pi.hardware_PWM(self.pwm_pin, 20000, int(speed * 6250 / 3));
+        _pi.write(self.dir_pin, dir_value)
+        _pi.hardware_PWM(self.pwm_pin, 20000, int(speed * 6250 / 3));
           # 20 kHz PWM, duty cycle in range 0-1000000 as expected by pigpio
 
 class Motors(object):
@@ -47,20 +47,28 @@ class Motors(object):
         self.motor1 = Motor(_pin_M1PWM, _pin_M1DIR)
         self.motor2 = Motor(_pin_M2PWM, _pin_M2DIR)
 
-        pi.set_pull_up_down(_pin_nFAULT, pigpio.PUD_UP) # make sure nFAULT is pulled up
-        pi.write(_pin_nEN, 0) # enable drivers by default
+        _pi.set_pull_up_down(_pin_nFAULT, pigpio.PUD_UP) # make sure nFAULT is pulled up
+        _pi.write(_pin_nEN, 0) # enable drivers by default
 
     def setSpeeds(self, m1_speed, m2_speed):
         self.motor1.setSpeed(m1_speed)
         self.motor2.setSpeed(m2_speed)
 
     def getFault(self):
-        return not pi.read(_pin_nFAULT)
+        return not _pi.read(_pin_nFAULT)
 
     def enable(self):
-        pi.write(_pin_nEN, 0)
+        _pi.write(_pin_nEN, 0)
 
     def disable(self):
-        pi.write(_pin_nEN, 1)
+        _pi.write(_pin_nEN, 1)
+
+    def forceStop(self):
+        # reinitialize the pigpio interface in case we interrupted another command
+        # (so this method works reliably when called from an exception handler)
+        global _pi
+        _pi.stop()
+        _pi = pigpio.pi()
+        self.setSpeeds(0, 0)
 
 motors = Motors()
