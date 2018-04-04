@@ -1,7 +1,7 @@
 # Python library for the Pololu Dual MAX14870 Motor Driver for Raspberry Pi
 
-Version: 1.0.0<br>
-Release Date: 2018-03-30<br>
+Version: 1.0.1<br>
+Release Date: 2018-04-03<br>
 [www.pololu.com](https://www.pololu.com/)
 
 ## Summary
@@ -107,4 +107,5 @@ above to be prefixed with `dual_max14870_rpi.`.
 
 ## Version history
 
+* 1.0.1 (2018-04-03): Improved error behavior and exception handling.
 * 1.0.0 (2018-03-30): Original release.
